@@ -4,11 +4,12 @@ global_variable int Running = 1;
 global_variable HINSTANCE hinst;
 global_variable HWND hwndMain;
 
-void* BitmapMemory;
+LARGE_INTEGER StartingTime, EndingTime, ElapsedMicroseconds, Frequency;
 
+// Rendering in WIN32
+void* BitmapMemory;
 int BitmapWidth;
 int BitmapHeight;
-
 int ClientWidth;
 int ClientHeight;
 
@@ -29,6 +30,18 @@ ClearScreen(u32 Color)
     {
         *Pixel++ = Color;
     }
+}
+
+internal i64 
+GetTicks()
+{
+    LARGE_INTEGER ticks;
+    if (!QueryPerformanceCounter(&ticks))
+    {
+        // winrt::throw_last_error();
+        printf("    ERROR: QueryPerformanceCounter");
+    }
+    return ticks.QuadPart;
 }
 
 LRESULT CALLBACK 
@@ -104,7 +117,6 @@ int APIENTRY WinMain(
     );
 
     // BitmapInfo struct for StretchDIBits
-
     BITMAPINFO BitmapInfo;
     BitmapInfo.bmiHeader.biSize = sizeof(BitmapInfo.bmiHeader);
     BitmapInfo.bmiHeader.biWidth = BitmapWidth;
@@ -119,6 +131,23 @@ int APIENTRY WinMain(
 	// Main loop
 	while (Running)
 	{
+        // i64 StartTime = GetTickCount();
+        QueryPerformanceFrequency(&Frequency);
+        QueryPerformanceCounter(&StartingTime);
+
+        // Activity to be timed
+
+        QueryPerformanceCounter(&EndingTime);
+        ElapsedMicroseconds.QuadPart = EndingTime.QuadPart - StartingTime.QuadPart;
+
+        // We now have the elapsed number of ticks, along with the
+        // number of ticks-per-second. We use these values
+        // to convert to the number of elapsed microseconds.
+        // To guard against loss-of-precision, we convert
+        // to microseconds *before* dividing by ticks-per-second.
+        ElapsedMicroseconds.QuadPart *= 1000000;
+        ElapsedMicroseconds.QuadPart /= Frequency.QuadPart;
+
         // Process windows messages
         MSG Message;
         while (PeekMessage(&Message, nullptr, 0, 0, PM_REMOVE)) 
@@ -139,7 +168,7 @@ int APIENTRY WinMain(
         {
             for (int y = 0; y < BitmapHeight; ++y)
             {
-                DrawPixel(x, y, x * y);
+                DrawPixel(x, y, (x + y));
             }
         }
 
@@ -151,6 +180,8 @@ int APIENTRY WinMain(
             BitmapMemory, &BitmapInfo,
             DIB_RGB_COLORS, SRCCOPY
         );
+
+        i64 EndTime = GetTickCount();
 	}
 
 	return (0);
