@@ -1,38 +1,38 @@
-﻿#include "cpp_playground.h"
+﻿#include "common_includes.h"
 
 global_variable int Running = 1;
 global_variable HINSTANCE hinst;
 global_variable HWND hwndMain;
 
-LARGE_INTEGER StartingTime, EndingTime, ElapsedMicroseconds, Frequency;
+global_variable LARGE_INTEGER StartingTime, EndingTime, ElapsedMicroseconds, Frequency;
 
 // Rendering in WIN32
-void* BitmapMemory;
-int BitmapWidth;
-int BitmapHeight;
-int ClientWidth;
-int ClientHeight;
+global_variable void *BitmapMemory;
+global_variable int BitmapWidth;
+global_variable int BitmapHeight;
+global_variable int ClientWidth;
+global_variable int ClientHeight;
 
 // Draws a pixel at X, Y (from top left corner)
-internal void 
-DrawPixel(int X, int Y, u32 Color) 
+internal void
+DrawPixel(int X, int Y, u32 Color)
 {
-    u32* Pixel = (u32*)BitmapMemory;
+    u32 *Pixel = (u32 *)BitmapMemory;
     Pixel += Y * BitmapWidth + X;
     *Pixel = Color;
 }
 
-internal void 
-ClearScreen(u32 Color) 
+internal void
+ClearScreen(u32 Color)
 {
-    u32* Pixel = (u32*)BitmapMemory;
-    for (int Index = 0; Index < BitmapWidth * BitmapHeight; ++Index) 
+    u32 *Pixel = (u32 *)BitmapMemory;
+    for (int Index = 0; Index < BitmapWidth * BitmapHeight; ++Index)
     {
         *Pixel++ = Color;
     }
 }
 
-internal i64 
+internal i64
 GetTicks()
 {
     LARGE_INTEGER ticks;
@@ -44,7 +44,7 @@ GetTicks()
     return ticks.QuadPart;
 }
 
-LRESULT CALLBACK 
+LRESULT CALLBACK
 WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     PAINTSTRUCT ps;
@@ -52,25 +52,24 @@ WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     switch (message)
     {
-        case WM_PAINT:
-            hdc = BeginPaint(hWnd, &ps);
-            TextOut(hdc, 0, 0, "Hello Team", 15);
-            EndPaint(hWnd, &ps);
-            return 0L;
+    case WM_PAINT:
+        hdc = BeginPaint(hWnd, &ps);
+        TextOut(hdc, 0, 0, "Hello Team", 15);
+        EndPaint(hWnd, &ps);
+        return 0L;
 
-        // Process other messages.   
+        // Process other messages.
     }
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 int APIENTRY WinMain(
-    HINSTANCE hInstance, 
-    HINSTANCE hInstancePrevious, 
-    PSTR cmdline, 
-    int cmdshow
-)
+    HINSTANCE hInstance,
+    HINSTANCE hInstancePrevious,
+    PSTR cmdline,
+    int cmdshow)
 {
-    WNDCLASS wc = { 0 };
+    WNDCLASS wc = {0};
     wc.lpfnWndProc = WinProc;
     wc.hInstance = hInstance;
     wc.lpszClassName = TEXT("TESTING");
@@ -79,15 +78,15 @@ int APIENTRY WinMain(
 
     // Create the window.
     HWND hwnd = CreateWindowEx(
-        WS_EX_CLIENTEDGE,                              // Optional window styles.
-        TEXT("TESTING"),                // Window class
-        TEXT("TESTING"),                // Window text
-        WS_OVERLAPPEDWINDOW,            // Window style
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,// Size and position
-        NULL,                           // Parent window    
-        NULL,                           // Menu
-        hInstance,                      // Instance handle
-        NULL                            // Additional application data
+        WS_EX_CLIENTEDGE,                                           // Optional window styles.
+        TEXT("TESTING"),                                            // Window class
+        TEXT("TESTING"),                                            // Window text
+        WS_OVERLAPPEDWINDOW,                                        // Window style
+        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, // Size and position
+        NULL,                                                       // Parent window
+        NULL,                                                       // Menu
+        hInstance,                                                  // Instance handle
+        NULL                                                        // Additional application data
     );
 
     if (hwnd == NULL)
@@ -97,7 +96,7 @@ int APIENTRY WinMain(
 
     ShowWindow(hwnd, cmdshow);
 
-    // Get client area dimensions 
+    // Get client area dimensions
     RECT ClientRect;
     GetClientRect(hwnd, &ClientRect);
     ClientWidth = ClientRect.right - ClientRect.left;
@@ -111,10 +110,9 @@ int APIENTRY WinMain(
     int BytesPerPixel = 4;
 
     BitmapMemory = VirtualAlloc(0,
-        BitmapWidth * BitmapHeight * BytesPerPixel,
-        MEM_RESERVE | MEM_COMMIT,
-        PAGE_READWRITE
-    );
+                                BitmapWidth * BitmapHeight * BytesPerPixel,
+                                MEM_RESERVE | MEM_COMMIT,
+                                PAGE_READWRITE);
 
     // BitmapInfo struct for StretchDIBits
     BITMAPINFO BitmapInfo;
@@ -128,9 +126,9 @@ int APIENTRY WinMain(
 
     HDC DeviceContext = GetDC(hwnd);
 
-	// Main loop
-	while (Running)
-	{
+    // Main loop
+    while (Running)
+    {
         // i64 StartTime = GetTickCount();
         QueryPerformanceFrequency(&Frequency);
         QueryPerformanceCounter(&StartingTime);
@@ -150,7 +148,7 @@ int APIENTRY WinMain(
 
         // Process windows messages
         MSG Message;
-        while (PeekMessage(&Message, nullptr, 0, 0, PM_REMOVE)) 
+        while (PeekMessage(&Message, nullptr, 0, 0, PM_REMOVE))
         {
             if (Message.message == WM_QUIT)
             {
@@ -173,16 +171,15 @@ int APIENTRY WinMain(
         }
 
         StretchDIBits(DeviceContext,
-            0, 0,
-            BitmapWidth, BitmapHeight,
-            0, 0,
-            ClientWidth, ClientHeight,
-            BitmapMemory, &BitmapInfo,
-            DIB_RGB_COLORS, SRCCOPY
-        );
+                      0, 0,
+                      BitmapWidth, BitmapHeight,
+                      0, 0,
+                      ClientWidth, ClientHeight,
+                      BitmapMemory, &BitmapInfo,
+                      DIB_RGB_COLORS, SRCCOPY);
 
         i64 EndTime = GetTickCount();
-	}
+    }
 
-	return (0);
+    return (0);
 }

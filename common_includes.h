@@ -1,15 +1,15 @@
-﻿// cpp_playground.h : Include file for standard system include files,
+// cpp_playground.h : Include file for standard system include files,
 // or project specific include files.
 
 #pragma once
 
 #include <iostream>
 #include <stdio.h>
-#include <windows.h>
+#include <stdlib.h>
 
-#define local_persist static 
-#define internal static 
-#define global_variable static 
+#define local_persist static
+#define internal static
+#define global_variable static
 
 typedef uint8_t u8;
 typedef uint16_t u16;
