@@ -12,7 +12,7 @@ if(LINUX)
     message(STATUS ">>> Linux")
     
     file(GLOB SRC_FILES
-        "main.cpp"
+        "spladi.cpp"
         "spladi_*.cpp"
         "spladi_*.h"
         "linux_*.cpp"
@@ -21,12 +21,16 @@ if(LINUX)
 
     add_executable(cpp_playground ${SRC_FILES})
     # linux stuff here
+    
+    include_directories(/usr/X11R6/lib)
+
+    set (CMAKE_CXX_FLAGS "-lX11")
 else()
     message(STATUS ">>> Not Linux")
     # stuff that should happen not on Linux 
     # Add source to this project's executable.
     file(GLOB SRC_FILES
-        "main.cpp"
+        "spladi.cpp"
         "spladi_*.cpp"
         "spladi_*.h"
         "win32_*.cpp"
@@ -38,7 +42,7 @@ else()
     
     
     if (CMAKE_VERSION VERSION_GREATER 3.12)
-      set_property(TARGET main PROPERTY CXX_STANDARD 20)
+      set_property(TARGET spladi PROPERTY CXX_STANDARD 20)
     endif()
 endif()
 

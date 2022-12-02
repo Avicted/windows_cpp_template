@@ -1,11 +1,10 @@
 #pragma once
 #include <cstdlib>
 
-struct PlatformWindow
-{
-};
+struct platform_window;
 
-PlatformWindow *PlatformCreateWindow(int Width, int Height);
+platform_window PlatformCreateWindow(int Width, int Height);
+void PlatformCloseWindow(platform_window *Window);
 
 #ifdef __linux__
 // linux code goes here
@@ -16,4 +15,5 @@ PlatformWindow *PlatformCreateWindow(int Width, int Height);
 #include "win32_platform.h"
 
 #else
+
 #endif

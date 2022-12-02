@@ -1,13 +1,15 @@
 #include "common_includes.h"
 #include "spladi_platform.h"
 
+internal void ApplicationUpdateAndRender();
+
 int main(int argc, char **argv)
 {
     bool Running = 1;
     int width = 640;
     int height = 340;
 
-    PlatformWindow *window = PlatformCreateWindow(width, height);
+    platform_window Window = PlatformCreateWindow(width, height);
 
     printf("\n    Testing main\n");
 

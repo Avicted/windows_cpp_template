@@ -1,4 +1,6 @@
-﻿#include "common_includes.h"
+﻿#include "win32_platform.h"
+#include "common_includes.h"
+#include <windows.h>
 
 global_variable int Running = 1;
 global_variable HINSTANCE hinst;
@@ -12,6 +14,11 @@ global_variable int BitmapWidth;
 global_variable int BitmapHeight;
 global_variable int ClientWidth;
 global_variable int ClientHeight;
+
+struct platform_window
+{
+    HWND Handle;
+};
 
 // Draws a pixel at X, Y (from top left corner)
 internal void

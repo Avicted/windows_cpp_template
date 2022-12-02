@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define local_persist static
 #define internal static
@@ -24,4 +25,9 @@ typedef int64_t i64;
 typedef size_t usize;
 typedef intmax_t isize;
 
+#define Bit (1)
+#define Byte (Bit)
+#define Kilobyte (Byte * 1024)
+#define Megabyte (Kilobyte * 1024)
+#define Gigabyte (Megabyte * 1024)
 // TODO: Reference additional headers your program requires here.
